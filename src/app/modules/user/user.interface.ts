@@ -4,6 +4,7 @@ import { USER_ROLE } from './user.constants';
 
 export type TUser = {
   id: string;
+  email: string;
   password: string;
   needsPasswordChange: boolean;
   passwordChangedAt?: Date;
