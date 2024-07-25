@@ -260,10 +260,11 @@ const resetPassword = async (
     config.jwt_access_secret as string,
   ) as JwtPayload;
 
-  //localhost:3000?id=A-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBLTAwMDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDI4NTA2MTcsImV4cCI6MTcwMjg1MTIxN30.-T90nRaz8-KouKki1DkCSMAbsHyb9yDi0djZU3D6QO4
+  // console.log(decoded);
+
+  //http://localhost:3000?id=F-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJGLTAwMDEiLCJyb2xlIjoiZmFjdWx0eSIsImlhdCI6MTcyMTg4NTQwMSwiZXhwIjoxNzIxODg2MDAxfQ.7yxCbsiDOPIPnHsdhvwcln_dGr5uJYB6Eiid_iJVpjw
 
   if (payload.id !== decoded.userId) {
-    console.log(payload.id, decoded.userId);
     throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
   }
 
