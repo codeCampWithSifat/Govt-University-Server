@@ -17,8 +17,13 @@ import { TFaculty } from '../Faculty/faculty.interface';
 import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 import { Faculty } from '../Faculty/faculty.model';
 import { Admin } from '../admin/admin.model';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
-const createStudentIntoDB = async (password: string, payload: TStudent) => {
+const createStudentIntoDB = async (
+  file: any,
+  password: string,
+  payload: TStudent,
+) => {
   // create a user object
   const userData: Partial<TUser> = {};
 
@@ -42,26 +47,38 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     session.startTransaction();
     //set  generated id
     userData.id = await generateStudentId(admissionSemester);
+
+    // send image to the cloudinary
+    const imageName = `${userData?.id}${payload?.name?.firstName}`;
+    const path = file?.path;
+    const { secure_url }: any = await sendImageToCloudinary(imageName, path);
     // create a user
     const newUser = await User.create([userData], { session });
     //create a student
-    if (newUser.length) {
-      // set id , _id as user
-      payload.id = newUser[0].id;
-      payload.user = newUser[0]._id; //reference _id
-
-      const newStudent = await Student.create([payload], { session });
-      if (!newStudent) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Student Creation Failed');
-      }
-      await session.commitTransaction();
-      await session.endSession();
-      return newStudent;
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
     }
-  } catch (error) {
+    // set id , _id as user
+    payload.id = newUser[0].id;
+    payload.user = newUser[0]._id; //reference _id
+    payload.profileImg = secure_url;
+
+    // create a student (transaction-2)
+
+    const newStudent = await Student.create([payload], { session });
+
+    if (!newStudent.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return newStudent;
+  } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new Error('Failed To Create User And Student.......?');
+    throw new Error(err);
   }
 };
 
