@@ -38,6 +38,7 @@ const academicSemeterSchema = new Schema<TAcademicSemester>(
   { timestamps: true },
 );
 
+// pre is document middleware
 academicSemeterSchema.pre('save', async function (next) {
   const isSemesterExist = await AcademicSemester.findOne({
     year: this.year,
