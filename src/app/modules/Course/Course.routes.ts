@@ -27,14 +27,14 @@ router.patch(
 );
 router.get(
   '/',
-  auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student),
+  // auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student),
   CourseControllers.getAllCourses,
 );
 router.delete('/:id', auth(USER_ROLE.admin), CourseControllers.deleteCourse);
 
 router.put(
   '/:courseId/assign-faculties',
-  auth(USER_ROLE.admin),
+  // auth(USER_ROLE.admin),
   validateRequest(CourseValidations.facultiesWithCourseValidationSchema),
   CourseControllers.assignFacultiesWithCourse,
 );
