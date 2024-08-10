@@ -100,6 +100,9 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     endTime,
   };
 
+  // ExistingstartTime 10:30 11:30
+  // NewstartTime 11:30 1:30
+
   assignedSchedules.forEach((schedule) => {
     const existingStartTime = new Date(`1970-01-01T${schedule.startTime}`);
     const existringEndTime = new Date(`1970-01-01T${schedule.endTime}`);
